@@ -85,15 +85,43 @@ UI.prototype.showMessage = (mensaje, tipo) => {
     }, 3000);
 }
 UI.prototype.showResult = (total, seguro) =>{
+
+    //convert number values of "marca" in text values
+    const{marca,year,tipo} = seguro
+    let marcaTexto;
+    switch (marca){
+        case '1':
+            marcaTexto = 'Americano'
+            break;
+        case '2':
+            marcaTexto = 'Asiatico'
+            break;
+        case '3':
+            marcaTexto = 'Europeo'
+            break;
+        default:
+            break;
+    }
+    
     //create result
     const div = document.createElement('div');
     div.classList.add('mt-10');
     div.innerHTML = `
         <p class="header">Tu Resumen</p>
-        <p class="font-bold">Total: ${total}</p>
+        <p class="font-bold">Marca: <span class="font-normal">${marcaTexto}</p>
+        <p class="font-bold">Año: <span class="font-normal">${year}</p>
+        <p class="font-bold">Tipo: <span class="font-normal capitalize">${tipo}</p>
+        <p class="font-bold">Total: <span class="font-normal">$${total}</p>
     `;
     const resutladoDiv = document.querySelector('#resultado');
-    resutladoDiv.appendChild(div);
+    //adding a spinner
+    const spinner = document.querySelector('#cargando');
+    spinner.style.display = 'block';
+    setTimeout(()=>{
+        spinner.style.display = 'none';//hide the spinner
+        resutladoDiv.appendChild(div);//show the result
+    }, 3000);
+
 }
 
 // instanciar UI
@@ -126,6 +154,11 @@ function cotizarSeguro(e){
     }
     ui.showMessage('cotizando...', 'éxito')
 
+    //hide old quotations
+    const resultados = document.querySelector('#resultado div');
+    if (resultados != null){
+        resultados.remove();
+    }
     //Instance of insurance
     const seguro = new Seguro(marca, year, tipo);
     const total = seguro.cotizarSeguro();
